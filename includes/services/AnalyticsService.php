@@ -642,7 +642,7 @@ class AnalyticsService
     {
         $limit = max(1, min($limit, 50));
 
-        return fetchAll(
+        $stmt = db()->prepare(
             "SELECT u.id, u.first_name, u.last_name, u.username,
                     COALESCE(SUM(d.word_count), 0) AS total_words,
                     COUNT(d.id) AS document_count,
@@ -654,9 +654,13 @@ class AnalyticsService
              WHERE e.class_id = :cid2 AND e.status = 'active'
              GROUP BY u.id, u.first_name, u.last_name, u.username
              ORDER BY total_words DESC
-             LIMIT {$limit}",
-            [':cid' => $classId, ':cid2' => $classId]
+             LIMIT :lim"
         );
+        $stmt->bindValue(':cid', $classId, PDO::PARAM_INT);
+        $stmt->bindValue(':cid2', $classId, PDO::PARAM_INT);
+        $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -782,14 +786,17 @@ class AnalyticsService
     {
         $limit = max(1, min($limit, 100));
 
-        return fetchAll(
+        $stmt = db()->prepare(
             "SELECT al.id, al.action, al.entity_type, al.entity_id, al.details, al.created_at
              FROM activity_logs al
              WHERE al.user_id = :uid
              ORDER BY al.created_at DESC
-             LIMIT {$limit}",
-            [':uid' => $userId]
+             LIMIT :lim"
         );
+        $stmt->bindValue(':uid', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**

@@ -431,12 +431,15 @@ class NotificationService
     public function getRecentNotifications(int $userId, int $limit = 10): array
     {
         $limit = max(1, min($limit, 50));
-        return fetchAll(
+        $stmt = db()->prepare(
             "SELECT * FROM notifications
              WHERE user_id = :uid
              ORDER BY created_at DESC
-             LIMIT {$limit}",
-            [':uid' => $userId]
+             LIMIT :lim"
         );
+        $stmt->bindValue(':uid', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

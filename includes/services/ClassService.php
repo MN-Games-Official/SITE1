@@ -510,7 +510,7 @@ class ClassService
     {
         $limit = max(1, min($limit, 100));
 
-        return fetchAll(
+        $stmt = db()->prepare(
             "SELECT al.*, u.first_name, u.last_name
              FROM activity_logs al
              JOIN users u ON u.id = al.user_id
@@ -523,9 +523,14 @@ class ClassService
                     SELECT a2.id FROM assignments a2 WHERE a2.class_id = :class_id3
                 ))
              ORDER BY al.created_at DESC
-             LIMIT {$limit}",
-            [':class_id' => $classId, ':class_id2' => $classId, ':class_id3' => $classId]
+             LIMIT :lim"
         );
+        $stmt->bindValue(':class_id', $classId, PDO::PARAM_INT);
+        $stmt->bindValue(':class_id2', $classId, PDO::PARAM_INT);
+        $stmt->bindValue(':class_id3', $classId, PDO::PARAM_INT);
+        $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**

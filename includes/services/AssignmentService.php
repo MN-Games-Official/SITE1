@@ -483,7 +483,7 @@ class AssignmentService
     public function getUpcoming(int $studentId, int $limit = 10): array
     {
         $limit = max(1, min($limit, 50));
-        return fetchAll(
+        $stmt = db()->prepare(
             "SELECT a.*, c.name AS class_name, c.subject AS class_subject,
                     d.id AS document_id, d.status AS document_status
              FROM assignments a
@@ -493,9 +493,13 @@ class AssignmentService
              WHERE a.is_published = 1 AND a.is_archived = 0
                AND a.due_date > NOW() AND c.is_active = 1
              ORDER BY a.due_date ASC
-             LIMIT {$limit}",
-            [':sid' => $studentId, ':sid2' => $studentId]
+             LIMIT :lim"
         );
+        $stmt->bindValue(':sid', $studentId, PDO::PARAM_INT);
+        $stmt->bindValue(':sid2', $studentId, PDO::PARAM_INT);
+        $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
