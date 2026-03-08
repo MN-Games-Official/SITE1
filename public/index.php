@@ -39,11 +39,11 @@ $path       = '/' . trim($requestUri, '/');
 // Static-file map — explicit page → file + layout bindings
 $routes = [
     // Public / marketing
-    '/'              => ['page' => 'home',               'layout' => 'landing'],
-    '/login'         => ['page' => 'login',              'layout' => 'auth'],
-    '/register'      => ['page' => 'register',           'layout' => 'auth'],
-    '/forgot'        => ['page' => 'forgot',             'layout' => 'auth'],
-    '/logout'        => ['page' => 'logout',             'layout' => 'auth'],
+    '/'                => ['page' => 'index',              'layout' => 'landing'],
+    '/login'           => ['page' => 'login',              'layout' => 'auth'],
+    '/register'        => ['page' => 'register',           'layout' => 'auth'],
+    '/forgot-password' => ['page' => 'forgot-password',    'layout' => 'auth'],
+    '/logout'          => ['page' => 'logout',             'layout' => 'auth'],
 
     // Student
     '/dashboard'     => ['page' => 'dashboard',          'layout' => 'app'],
@@ -51,7 +51,11 @@ $routes = [
     '/assignments'   => ['page' => 'assignments',        'layout' => 'app'],
     '/classes'       => ['page' => 'classes',            'layout' => 'app'],
     '/ai-assistant'  => ['page' => 'ai-assistant',       'layout' => 'app'],
-    '/analytics'     => ['page' => 'analytics',          'layout' => 'app'],
+    '/analytics'           => ['page' => 'analytics-student',    'layout' => 'app'],
+    '/analytics/student'   => ['page' => 'analytics-student',    'layout' => 'app'],
+    '/analytics/teacher'   => ['page' => 'analytics-teacher',    'layout' => 'app'],
+    '/violations'          => ['page' => 'violations',            'layout' => 'app'],
+    '/audit-log'           => ['page' => 'audit-log',             'layout' => 'app'],
     '/profile'       => ['page' => 'profile',            'layout' => 'app'],
     '/settings'      => ['page' => 'settings',           'layout' => 'app'],
 
