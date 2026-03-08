@@ -43,6 +43,7 @@ $routes = [
     '/login'         => ['page' => 'login',              'layout' => 'auth'],
     '/register'      => ['page' => 'register',           'layout' => 'auth'],
     '/forgot'        => ['page' => 'forgot',             'layout' => 'auth'],
+    '/logout'        => ['page' => 'logout',             'layout' => 'auth'],
 
     // Student
     '/dashboard'     => ['page' => 'dashboard',          'layout' => 'app'],
