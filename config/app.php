@@ -158,6 +158,10 @@ define('EXPORT_MAX_AGE', 86400); // 24 hours
 date_default_timezone_set(APP_TIMEZONE);
 mb_internal_encoding('UTF-8');
 
+if (APP_ENV === 'production' && APP_SECRET === 'CHANGE_THIS_TO_A_RANDOM_SECRET_KEY') {
+    error_log('[CRITICAL] APP_SECRET has not been configured. Set the APP_SECRET environment variable.');
+}
+
 if (APP_DEBUG) {
     error_reporting(E_ALL);
     ini_set('display_errors', '1');

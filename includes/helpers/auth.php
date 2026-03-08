@@ -373,10 +373,12 @@ function checkLoginAttempts(string $email): bool
 
     $row = fetch(
         'SELECT COUNT(*) AS attempts FROM activity_logs
-         WHERE action = :action AND details LIKE :email AND created_at > :cutoff',
+         WHERE action = :action
+           AND JSON_UNQUOTE(JSON_EXTRACT(details, \'$.email\')) = :email
+           AND created_at > :cutoff',
         [
             ':action' => 'login_failed',
-            ':email'  => '%' . $email . '%',
+            ':email'  => $email,
             ':cutoff' => $cutoff,
         ]
     );

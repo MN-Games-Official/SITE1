@@ -179,7 +179,7 @@ function renderPage(string $template, array $data = []): void
     $data['flash_message'] = getFlashMessage();
 
     if (session_status() === PHP_SESSION_ACTIVE) {
-        $data['csrf_token'] = $_SESSION['csrf_token'] ?? ($_SESSION['_csrf_token'] ?? '');
+        $data['csrf_token'] = $_SESSION['csrf_token'] ?? '';
         $data['current_user_id']   = $_SESSION['user_id'] ?? null;
         $data['current_user_role'] = $_SESSION['role'] ?? null;
     }

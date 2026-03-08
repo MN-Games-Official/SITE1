@@ -100,7 +100,9 @@ class Database
             try {
                 $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
 
-                $pdo->exec("SET NAMES '" . DB_CHARSET . "' COLLATE '" . DB_COLLATION . "'");
+                $charset = preg_replace('/[^a-zA-Z0-9_]/', '', DB_CHARSET);
+                $collation = preg_replace('/[^a-zA-Z0-9_]/', '', DB_COLLATION);
+                $pdo->exec("SET NAMES '{$charset}' COLLATE '{$collation}'");
                 $pdo->exec('SET SESSION sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"');
 
                 if (defined('DB_READ_TIMEOUT')) {
