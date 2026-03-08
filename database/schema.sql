@@ -151,38 +151,7 @@ CREATE TABLE `enrollments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------
--- 7. ai_policy_rules  (created before assignments due to FK reference)
--- -----------------------------------------------------------------------------
-DROP TABLE IF EXISTS `ai_policy_rules`;
-CREATE TABLE `ai_policy_rules` (
-    `id`                INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-    `school_id`         INT UNSIGNED    DEFAULT NULL,
-    `class_id`          INT UNSIGNED    DEFAULT NULL,
-    `assignment_id`     INT UNSIGNED    DEFAULT NULL,
-    `rule_name`         VARCHAR(255)    NOT NULL,
-    `rule_type`         ENUM('allow','deny','limit','redirect') NOT NULL,
-    `category`          ENUM('content_generation','grammar','brainstorm','outline','analysis','reflection','rewrite','translation','code_help','other') NOT NULL,
-    `strictness_level`  ENUM('lenient','moderate','strict','exam') NOT NULL DEFAULT 'moderate',
-    `conditions`        JSON            DEFAULT NULL,
-    `message`           TEXT            DEFAULT NULL,
-    `is_active`         TINYINT(1)      NOT NULL DEFAULT 1,
-    `priority`          INT             NOT NULL DEFAULT 0,
-    `created_at`        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    INDEX `idx_ai_policy_rules_school_id` (`school_id`),
-    INDEX `idx_ai_policy_rules_class_id` (`class_id`),
-    INDEX `idx_ai_policy_rules_assignment_id` (`assignment_id`),
-    INDEX `idx_ai_policy_rules_category` (`category`),
-    INDEX `idx_ai_policy_rules_is_active` (`is_active`),
-    INDEX `idx_ai_policy_rules_priority` (`priority`),
-    CONSTRAINT `fk_ai_policy_rules_school` FOREIGN KEY (`school_id`) REFERENCES `schools` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `fk_ai_policy_rules_class` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `fk_ai_policy_rules_assignment` FOREIGN KEY (`assignment_id`) REFERENCES `assignments` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- -----------------------------------------------------------------------------
--- 8. assignments
+-- 7. assignments
 -- -----------------------------------------------------------------------------
 DROP TABLE IF EXISTS `assignments`;
 CREATE TABLE `assignments` (
@@ -212,9 +181,43 @@ CREATE TABLE `assignments` (
     INDEX `idx_assignments_assignment_type` (`assignment_type`),
     INDEX `idx_assignments_ai_policy_id` (`ai_policy_id`),
     CONSTRAINT `fk_assignments_class` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `fk_assignments_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `fk_assignments_ai_policy` FOREIGN KEY (`ai_policy_id`) REFERENCES `ai_policy_rules` (`id`) ON DELETE SET NULL
+    CONSTRAINT `fk_assignments_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- -----------------------------------------------------------------------------
+-- 8. ai_policy_rules
+-- -----------------------------------------------------------------------------
+DROP TABLE IF EXISTS `ai_policy_rules`;
+CREATE TABLE `ai_policy_rules` (
+    `id`                INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `school_id`         INT UNSIGNED    DEFAULT NULL,
+    `class_id`          INT UNSIGNED    DEFAULT NULL,
+    `assignment_id`     INT UNSIGNED    DEFAULT NULL,
+    `rule_name`         VARCHAR(255)    NOT NULL,
+    `rule_type`         ENUM('allow','deny','limit','redirect') NOT NULL,
+    `category`          ENUM('content_generation','grammar','brainstorm','outline','analysis','reflection','rewrite','translation','code_help','other') NOT NULL,
+    `strictness_level`  ENUM('lenient','moderate','strict','exam') NOT NULL DEFAULT 'moderate',
+    `conditions`        JSON            DEFAULT NULL,
+    `message`           TEXT            DEFAULT NULL,
+    `is_active`         TINYINT(1)      NOT NULL DEFAULT 1,
+    `priority`          INT             NOT NULL DEFAULT 0,
+    `created_at`        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_ai_policy_rules_school_id` (`school_id`),
+    INDEX `idx_ai_policy_rules_class_id` (`class_id`),
+    INDEX `idx_ai_policy_rules_assignment_id` (`assignment_id`),
+    INDEX `idx_ai_policy_rules_category` (`category`),
+    INDEX `idx_ai_policy_rules_is_active` (`is_active`),
+    INDEX `idx_ai_policy_rules_priority` (`priority`),
+    CONSTRAINT `fk_ai_policy_rules_school` FOREIGN KEY (`school_id`) REFERENCES `schools` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_ai_policy_rules_class` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_ai_policy_rules_assignment` FOREIGN KEY (`assignment_id`) REFERENCES `assignments` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Cross-reference FK: assignments.ai_policy_id -> ai_policy_rules.id
+ALTER TABLE `assignments`
+    ADD CONSTRAINT `fk_assignments_ai_policy` FOREIGN KEY (`ai_policy_id`) REFERENCES `ai_policy_rules` (`id`) ON DELETE SET NULL;
 
 -- -----------------------------------------------------------------------------
 -- 9. documents
