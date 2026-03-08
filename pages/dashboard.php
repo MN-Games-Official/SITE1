@@ -190,7 +190,7 @@ $notifications = [
 
 $motivationalMessages = [
     'Keep up the great work — consistency is the key to mastery!',
-    'Your writing has improved 12 % this month. Impressive progress!',
+    'Your writing has improved 12% this month. Impressive progress!',
     'You&rsquo;re on a 5-day streak! Keep the momentum going.',
     'Small steps every day lead to big results. You&rsquo;ve got this!',
 ];
