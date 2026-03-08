@@ -1,0 +1,26 @@
+# ──────────────────────────────────────────────────────────────
+# LearnAI — Apache Rewrite Rules
+# Route every request through public/index.php
+# ──────────────────────────────────────────────────────────────
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirect everything into the public/ directory
+    RewriteRule ^$ public/ [L]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Security — block direct access to sensitive directories
+<IfModule mod_rewrite.c>
+    RewriteRule ^(config|includes|layouts|partials|pages)/ - [F,L]
+</IfModule>
+
+# Prevent directory listings
+Options -Indexes
+
+# Deny access to hidden files
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
